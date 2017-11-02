@@ -7,20 +7,20 @@ import java.util.StringTokenizer;
 
 public class MyCal {
     public static void main(String[] arg) {
-        String s = "(1+1)/2*(3-2)";
+        String s = "((3-2)*(1+2)-1)/((100-99)*2-3)";
 
         Cl cl = new Cl();
 
         try {
             cl.parse(s);
-        }
-        catch (ParseException ps){
 
-        }
-        cl.showStack();
-        System.out.println(cl.calcul());
+            cl.showStack();
 
-        //System.out.println(1);
+            System.out.println(cl.calcul());
+        }
+        catch (ParseException e){
+            System.out.println(e.getMessage());
+        }
     }
 }
 
@@ -108,35 +108,36 @@ class Cl {
     }
 
     public Integer calcul() {
-        int left = 0, right = 0, res = 0;
+
+        Stack<Integer> stack = new Stack<>();
+        stack.clear();
+        int left = 0, right = 0;
 
         while (!stackRPN.empty()) {
             String token = stackRPN.pop();
-            if(isNumber(token)) {
-                if(!stackRPN.empty() && isNumber(stackRPN.peek())) {
-                    res += left;
-                    left = Integer.parseInt(token);
+            if (isNumber(token)) {
+                stack.push(Integer.parseInt(token));
+            } else {
+                right = stack.pop();
+                left = stack.pop();
+                switch (token) {
+                    case "-":
+                        left -= right;
+                        break;
+                    case "+":
+                        left += right;
+                        break;
+                    case "*":
+                        left *= right;
+                        break;
+                    case "/":
+                        left /= right;
+                        break;
                 }
-                else {
-                        //left = res;
-                        right = Integer.parseInt(token);
-                    }
-            } else switch (token) {
-                case "-":
-                    left -= right;
-                    break;
-                case "+":
-                    left += right;
-                    break;
-                case "*":
-                    left *= right;
-                    break;
-                case  "/":
-                    left /= right;
-                    break;
+                stack.push(left);
             }
         }
-        return left;
+        return  stack.pop();
     }
 
     public void showStack(){
