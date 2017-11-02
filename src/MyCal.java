@@ -1,3 +1,5 @@
+//import com.sun.org.apache.xpath.internal.operations.String;
+
 import java.lang.reflect.Array;
 import java.text.ParseException;
 import java.util.Arrays;
@@ -8,7 +10,7 @@ import java.util.StringTokenizer;
 public class MyCal {
     public static void main(String[] arg) {
         //Expression:
-        String s = "((3-2)*(1+2)-1)/((100-99)*2-3)";
+        java.lang.String s = "((3-2)*(1+2)-1)/((100-99)*2-3)";
 
         System.out.println("Expression:");
         System.out.println(s);
@@ -21,7 +23,7 @@ public class MyCal {
 
             cl.showStack(stackRPN);
 
-            System.out.println("Result = " + cl.calcul(stackRPN));
+            System.out.println("Result = " + cl.calculate(stackRPN));
         }
         catch (ParseException e){
             System.out.println(e.getMessage());
@@ -36,6 +38,12 @@ class Cl {
     private Stack<String> stackOperations = new Stack<String>();
     // stack for holding expression converted to reversed polish notation
     private Stack<String> stackRPN = new Stack<String>();
+    //
+    private final String[][] replaceSymbols  = {
+            {" ",""},
+            {"(-", "(0-"},
+            {",-", ",0-"}
+    };
 
     private boolean isNumber(String token) {
         try {
@@ -64,17 +72,23 @@ class Cl {
         }
         return 2;
     }
+
+    private String takeOutLitter(String inputExpression) {
+        for (String[] rSymbols: replaceSymbols)
+            inputExpression = inputExpression.replace(rSymbols[0], rSymbols[1]);
+        if (inputExpression.charAt(0) == '-') {
+            inputExpression = "0" + inputExpression;
+        }
+        return inputExpression;
+
+    }
     public Stack<String> parse(String expression) throws ParseException {
         // cleaning stacks
         stackOperations.clear();
         stackRPN.clear();
 
         // make some preparations
-        expression = expression.replace(" ", "").replace("(-", "(0-")
-                .replace(",-", ",0-");
-        if (expression.charAt(0) == '-') {
-            expression = "0" + expression;
-        }
+        expression = takeOutLitter(expression);
         // splitting input string into tokens
         StringTokenizer stringTokenizer = new StringTokenizer(expression,
                 OPERATORS + "()", true);
@@ -89,6 +103,7 @@ class Cl {
                         && !isOpenBracket(stackOperations.lastElement())) {
                     stackRPN.push(stackOperations.pop());
                 }
+                // delete last open bracket in stackOperations
                 stackOperations.pop();
             } else if (isNumber(token)) {
                     stackRPN.push(token);
@@ -112,37 +127,40 @@ class Cl {
         return stackRPN;
     }
 
-    public Integer calcul(Stack<String> stackRPN) {
+    public Integer calculate(Stack<String> stackRPN) {
 
         Stack<Integer> stack = new Stack<>();
         stack.clear();
-        int left = 0, right = 0;
 
         while (!stackRPN.empty()) {
             String token = stackRPN.pop();
             if (isNumber(token)) {
                 stack.push(Integer.parseInt(token));
             } else {
-                right = stack.pop();
-                left = stack.pop();
-                switch (token) {
-                    case "-":
-                        left -= right;
-                        break;
-                    case "+":
-                        left += right;
-                        break;
-                    case "*":
-                        left *= right;
-                        break;
-                    case "/":
-                        left /= right;
-                        break;
-                }
-                stack.push(left);
+                int right = stack.pop();
+                stack.push(doOperation(stack.pop(), right, token));
             }
         }
         return  stack.pop();
+    }
+
+    private  int doOperation(int left, int right, String operator) {
+
+        switch (operator) {
+            case "-":
+                left -= right;
+                break;
+            case "+":
+                left += right;
+                break;
+            case "*":
+                left *= right;
+                break;
+            case "/":
+                left /= right;
+                break;
+        }
+        return  left;
     }
 
     public void showStack(Stack<String> stackRPN){
@@ -150,7 +168,7 @@ class Cl {
         stack.addAll(stackRPN);
         System.out.println("stack in reversed polish notation:");
         while (!stack.empty()) {
-            System.out.print(stack.pop());
+            System.out.print(stack.pop() + " ");
         }
         System.out.println();
     }
