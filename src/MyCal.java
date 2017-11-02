@@ -7,16 +7,21 @@ import java.util.StringTokenizer;
 
 public class MyCal {
     public static void main(String[] arg) {
+        //Expression:
         String s = "((3-2)*(1+2)-1)/((100-99)*2-3)";
+
+        System.out.println("Expression:");
+        System.out.println(s);
 
         Cl cl = new Cl();
 
         try {
-            cl.parse(s);
 
-            cl.showStack();
+            Stack<String> stackRPN = cl.parse(s);
 
-            System.out.println(cl.calcul());
+            cl.showStack(stackRPN);
+
+            System.out.println("Result = " + cl.calcul(stackRPN));
         }
         catch (ParseException e){
             System.out.println(e.getMessage());
@@ -27,12 +32,10 @@ public class MyCal {
 class Cl {
     // list of available operators
     private final String OPERATORS = "+-*/";
-    // temporary stack that holds operators, functions and brackets
+    // temporary stack that holds operators and brackets
     private Stack<String> stackOperations = new Stack<String>();
     // stack for holding expression converted to reversed polish notation
     private Stack<String> stackRPN = new Stack<String>();
-    // stack for holding the calculations result
-    private Stack<String> stackAnswer = new Stack<String>();
 
     private boolean isNumber(String token) {
         try {
@@ -61,7 +64,7 @@ class Cl {
         }
         return 2;
     }
-    public void parse(String expression) throws ParseException {
+    public Stack<String> parse(String expression) throws ParseException {
         // cleaning stacks
         stackOperations.clear();
         stackRPN.clear();
@@ -105,9 +108,11 @@ class Cl {
 
         // reverse stack
         Collections.reverse(stackRPN);
+
+        return stackRPN;
     }
 
-    public Integer calcul() {
+    public Integer calcul(Stack<String> stackRPN) {
 
         Stack<Integer> stack = new Stack<>();
         stack.clear();
@@ -140,12 +145,13 @@ class Cl {
         return  stack.pop();
     }
 
-    public void showStack(){
+    public void showStack(Stack<String> stackRPN){
         Stack<String> stack = new Stack<>();
         stack.addAll(stackRPN);
-
+        System.out.println("stack in reversed polish notation:");
         while (!stack.empty()) {
-            System.out.println(stack.pop());
+            System.out.print(stack.pop());
         }
+        System.out.println();
     }
 }
