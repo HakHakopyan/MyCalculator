@@ -45,6 +45,61 @@ class Cl {
             {",-", ",0-"}
     };
 
+    public Stack<String> getStackOperations() {
+        return stackOperations;
+    }
+
+    private Stack<String> setStackOperations(String token) {
+        Stack<String> returnStack = new Stack<>();
+        returnStack.clear();
+
+        if (isOpenBracket(token)) {
+            stackOperations.push(token);
+            return returnStack;
+        }
+
+        if (isCloseBracket(token)) {
+            while (!stackOperations.empty() && !isOpenBracket(stackOperations.lastElement())) {
+                returnStack.push(stackOperations.pop());
+            }
+            stackOperations.pop();
+            return returnStack;
+        }
+
+        if (isOperator(token)) {
+            while (!stackOperations.empty() && isOperator(stackOperations.lastElement())
+                    && getPrecedence(token) <= getPrecedence(stackOperations.lastElement())) {
+                returnStack.push(stackOperations.pop());
+            }
+            stackOperations.push(token);
+            return returnStack;
+        }
+
+        returnStack.push(token);
+
+        return returnStack;
+    }
+
+
+    private void setStackRPN(Stack<String> inputStack) {
+
+        while (!inputStack.empty()) {
+            if (checkToken(inputStack.lastElement())) {
+                stackRPN.push(inputStack.pop());
+            } else
+                errorMessage(inputStack.pop());
+        }
+    }
+
+    private  void  errorMessage(String token) {
+        System.out.println("incorrect character has been entered: " + token);
+    }
+
+    private  boolean checkToken(String token) {
+        return isOperator(token)||isNumber(token) ? true : false;
+    }
+
+
     private boolean isNumber(String token) {
         try {
             Integer.parseInt(token);
@@ -96,32 +151,11 @@ class Cl {
         // loop for handling each token - shunting-yard algorithm
         while (stringTokenizer.hasMoreTokens()) {
             String token = stringTokenizer.nextToken();
-            if (isOpenBracket(token)) {
-                stackOperations.push(token);
-            } else if (isCloseBracket(token)) {
-                while (!stackOperations.empty()
-                        && !isOpenBracket(stackOperations.lastElement())) {
-                    stackRPN.push(stackOperations.pop());
-                }
-                // delete last open bracket in stackOperations
-                stackOperations.pop();
-            } else if (isNumber(token)) {
-                    stackRPN.push(token);
-            } else if (isOperator(token)) {
-                while (!stackOperations.empty()
-                        && isOperator(stackOperations.lastElement())
-                        && getPrecedence(token) <= getPrecedence(stackOperations
-                        .lastElement())) {
-                    stackRPN.push(stackOperations.pop());
-                }
-                stackOperations.push(token);
-            }
-        }
-        while (!stackOperations.empty()) {
-            stackRPN.push(stackOperations.pop());
+            setStackRPN(setStackOperations(token));
         }
 
-        // reverse stack
+        setStackRPN(stackOperations);
+
         Collections.reverse(stackRPN);
 
         return stackRPN;
