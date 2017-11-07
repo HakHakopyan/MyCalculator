@@ -14,7 +14,9 @@ the program displays the result of the calculation expression, entered as a stri
   Побробное описание алгоритма можно посмотреть здесь https://ru.wikipedia.org/wiki/Обратная_польская_запись
   
 Опсание программы:
+
   Программа делится на два класса:
+  
     Public MyCal {
       public static void main(String[] arg)
     }
