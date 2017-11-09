@@ -14,7 +14,7 @@ class Calculator {
     private final String[][] replaceSymbols  = {
             {" ",""},
             {"(-", "(0-"},
-            {",-", ",0-"}
+            {",", "."}
     };
 
     //
@@ -78,7 +78,7 @@ class Calculator {
     }
 
     // get result of calculation input expression
-    public   int getResult(String inputEexpression) {
+    public   double getResult(String inputEexpression) {
         Stack<String> stackRPN = new Stack<>();
 
         try {
@@ -95,13 +95,13 @@ class Calculator {
     }
 
     private  boolean checkToken(String token) {
-        return isOperator(token)||isNumber(token) ? true : false;
+        return isOperator(token)||isNumber(token);
     }
 
 
     private boolean isNumber(String token) {
         try {
-            Integer.parseInt(token);
+            Double.parseDouble(token);
         } catch (Exception e) {
             return false;
         }
@@ -161,17 +161,17 @@ class Calculator {
     }
 
     // calculate the result of the expression in the reverse Polish notation
-    public Integer calculate(Stack<String> myStackRPN) {
+    public double calculate(Stack<String> myStackRPN) {
 
-        Stack<Integer> stack = new Stack<>();
+        Stack<Double> stack = new Stack<>();
         stack.clear();
 
         while (!myStackRPN.empty()) {
             String token = myStackRPN.pop();
             if (isNumber(token)) {
-                stack.push(Integer.parseInt(token));
+                stack.push(Double.parseDouble(token));
             } else {
-                int right = stack.pop();
+                double right = stack.pop();
                 stack.push(doOperation(stack.pop(), right, token));
             }
         }
@@ -179,7 +179,7 @@ class Calculator {
     }
 
     // Get the result of the operation between the left and right numbers
-    private  int doOperation(int left, int right, String operator) {
+    private  double doOperation(double left, double right, String operator) {
 
         switch (operator) {
             case "-":
@@ -195,7 +195,7 @@ class Calculator {
                 left /= right;
                 break;
             case "^":
-                left = (int) Math.pow(left, right);
+                left = Math.pow(left, right);
         }
         return  left;
     }
