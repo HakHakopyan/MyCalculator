@@ -1,15 +1,34 @@
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 
 public class MyCal {
     public static void main(String[] arg) {
         //Expression:
-        java.lang.String expression = "((3-2)*(1+2^3)-1)/((100-99)*2-3)";
+        try {
 
-        System.out.println("Expression:");
-        System.out.println(expression);
+            //String expression = "3*+1";
+            String expression = getExpression();
 
-        Calculator calculator = new Calculator();
 
-        System.out.println(calculator.getResult(expression));
+            System.out.println("Expression:");
+            System.out.println(expression);
 
+            Calculator calculator = new Calculator();
+
+            System.out.println("Result: " + calculator.getResult(expression));
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        }
+
+    }
+
+    private static   String getExpression() throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+
+        System.out.println("Выражение может содержать целые и вещественные числа, скобки и следующие опретаоры: +-*/^");
+        System.out.println("Введите выражение:");
+
+        return  br.readLine();
     }
 }
