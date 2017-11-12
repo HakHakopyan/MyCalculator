@@ -1,4 +1,4 @@
-public class MyEcxeption extends Exception{
+public class MyEcxeption extends Exception implements  ExpressionComponents{
     private  String myException;
 
     public String getMyException() {
@@ -8,19 +8,19 @@ public class MyEcxeption extends Exception{
     private void setMyExceptionWithCheck(String exception) {
         String finalException = "Error: ";
         switch (exception) {
-            case "(":
+            case OPEN_BRACKET:
                 finalException += "Redundant opening parenthesis";
                 break;
-            case ")":
+            case CLOSE_BRACKET:
                 finalException += "Redundant closing parenthesis";
                 break;
         }
 
-        this.myException = finalException;
+        setMyException(exception);
     }
 
     private  void setMyException(String exception) {
-            this.myException = exception;
+            this.myException = "Error: " + exception;
     }
 
     MyEcxeption(String exception, boolean check) {
@@ -32,5 +32,16 @@ public class MyEcxeption extends Exception{
 
     MyEcxeption(String exception) {
         setMyException(exception);
+    }
+
+    MyEcxeption(double leftArg, double rightArg, String operator) {
+        String finalException = "";
+        if (operator == DIVISION) {
+            finalException += "Division by zero: ";
+        }
+        else
+            finalException += "Arithmetic error: ";
+        finalException += "" + leftArg + operator + rightArg;
+        setMyException(finalException);
     }
 }

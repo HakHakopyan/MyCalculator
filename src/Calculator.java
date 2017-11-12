@@ -3,23 +3,14 @@ import java.util.Collections;
 import java.util.Stack;
 import java.util.StringTokenizer;
 
-class Calculator {
-    // list of available operators
-    private final String OPERATORS = "+-*/^";
+class Calculator extends  CheckExpression{
     // temporary stack that holds operators and brackets
     private Stack<String> stackOperations = new Stack<String>();
     // stack for holding expression converted to reversed polish notation
     private Stack<String> stackRPN = new Stack<String>();
-    //
-    private final String[][] replaceSymbols  = {
-            {" ",""},
-            {"(-", "(0-"},
-            {",", "."},
-            {"()", ""}
-    };
 
     //
-    private Stack<String> setStackOperations(String token) {
+    private Stack<String> setStackOperations(String token) throws MyEcxeption {
         Stack<String> returnStack = new Stack<>();
         returnStack.clear();
 
@@ -34,7 +25,9 @@ class Calculator {
             while (!stackOperations.empty() && !isOpenBracket(stackOperations.lastElement())) {
                 returnStack.push(stackOperations.pop());
             }
-            // Delete "(" in stackOperations
+            // Delete open bracket in stackOperations
+            if (stackOperations.empty())
+                throw new MyEcxeption(OPEN_BRACKET, true);
             stackOperations.pop();
             return getReverse(returnStack);
         }
@@ -60,7 +53,7 @@ class Calculator {
 
         while (!inputStack.empty()) {
             // if lastElement operator or number, then add it to stackRPN
-            if (checkToken(inputStack.lastElement())) {
+            if (checkSymbolOperaotrOrNumber(inputStack.lastElement())) {
                 this.stackRPN.push(inputStack.pop());
             } else
                 throw new MyEcxeption(inputStack.pop(), true);
@@ -83,7 +76,7 @@ class Calculator {
         Stack<String> stackRPN;
 
         // make some preparations
-        inputEexpression = takeOutLitter(inputEexpression);
+        inputEexpression = changeIncorrectSybols(inputEexpression);
 
         if (inputEexpression.length() == 0)
             throw new MyEcxeption("the entered expression is empty");
@@ -101,51 +94,6 @@ class Calculator {
         return  calculate(stackRPN);
     }
 
-    private  boolean checkToken(String token) {
-        return isOperator(token)||isNumber(token);
-    }
-
-
-    private boolean isNumber(String token) {
-        try {
-            Double.parseDouble(token);
-        } catch (Exception e) {
-            return false;
-        }
-        return true;
-    }
-
-    private boolean isOpenBracket(String token) {
-        return token.equals("(");
-    }
-
-    private boolean isCloseBracket(String token) {
-        return token.equals(")");
-    }
-
-    private boolean isOperator(String token) {
-        return OPERATORS.contains(token);
-    }
-
-    private byte getPrecedence(String token) {
-        if (token.equals("+") || token.equals("-")) {
-            return 1;
-        }
-        return 2;
-    }
-
-    // Change incorrect symbols to correct ones
-    private String takeOutLitter(String inputExpression) {
-        for (String[] rSymbols: replaceSymbols)
-            inputExpression = inputExpression.replace(rSymbols[0], rSymbols[1]);
-        if (!inputExpression.isEmpty()) {
-            if (inputExpression.charAt(0) == '-') {
-                inputExpression = "0" + inputExpression;
-            }
-        }
-        return inputExpression;
-
-    }
     // Change input expression to Reverse Polish Notation
     public Stack<String> parse(String expression) throws ParseException, MyEcxeption {
         // cleaning stacks
@@ -168,7 +116,7 @@ class Calculator {
     }
 
     // calculate the result of the expression in the reverse Polish notation
-    public double calculate(Stack<String> myStackRPN) {
+    public double calculate(Stack<String> myStackRPN) throws  MyEcxeption {
 
         Stack<Double> stack = new Stack<>();
         stack.clear();
@@ -186,23 +134,28 @@ class Calculator {
     }
 
     // Get the result of the operation between the left and right numbers
-    private  double doOperation(double left, double right, String operator) {
-
-        switch (operator) {
-            case "-":
-                left -= right;
-                break;
-            case "+":
-                left += right;
-                break;
-            case "*":
-                left *= right;
-                break;
-            case "/":
-                    left /= right;
-                break;
-            case "^":
-                left = Math.pow(left, right);
+    private  double doOperation(double left, double right, String operator) throws  MyEcxeption {
+        try {
+            switch (operator) {
+                case "-":
+                    left -= right;
+                    break;
+                case "+":
+                    left += right;
+                    break;
+                case "*":
+                    left *= right;
+                    break;
+                case "/":
+                        if (right == 0)
+                            throw new MyEcxeption(left, right, operator);
+                        left /= right;
+                    break;
+                case "^":
+                    left = Math.pow(left, right);
+            }
+        } catch (ArithmeticException ex) {
+            throw new MyEcxeption(left, right, operator);
         }
         return  left;
     }
