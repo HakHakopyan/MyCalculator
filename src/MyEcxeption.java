@@ -17,7 +17,7 @@ public class MyEcxeption extends Exception implements  ExpressionComponents{
                 break;
         }
 
-        setMyException(exception);
+        setMyException(finalException);
     }
 
     // Use when there is a description of the error

@@ -5,6 +5,7 @@ public interface ExpressionComponents {
 
     String OPEN_BRACKET = "(";
     String CLOSE_BRACKET = ")";
+    String EMPTY_BRACKETS = "()";
 
     String DIVISION = "/";
 

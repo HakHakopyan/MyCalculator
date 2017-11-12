@@ -100,7 +100,7 @@ class Calculator extends  CheckExpression{
 
         // splitting input string into tokens
         StringTokenizer stringTokenizer = new StringTokenizer(expression,
-                OPERATORS + "()", true);
+                OPERATORS + EMPTY_BRACKETS, true);
 
         // loop for handling each token - shunting-yard algorithm
         while (stringTokenizer.hasMoreTokens()) {
