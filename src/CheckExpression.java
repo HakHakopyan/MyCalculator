@@ -34,7 +34,7 @@ public class CheckExpression implements  ExpressionComponents {
     }
 
     // Change incorrect symbols to correct ones
-    public String changeIncorrectSybols(String inputExpression) {
+    public String changeIncorrectSymbols(String inputExpression) {
         for (String[] rSymbols: REPLACE_SYMBOLS)
             inputExpression = inputExpression.replace(rSymbols[0], rSymbols[1]);
         if (!inputExpression.isEmpty()) {

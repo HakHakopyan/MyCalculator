@@ -9,7 +9,8 @@ class Calculator extends  CheckExpression{
     // stack for holding expression converted to reversed polish notation
     private Stack<String> stackRPN = new Stack<String>();
 
-    //
+    // if close bracket then put all operators before first open bracket in return stack
+    // if operator then check precedence operators in token and last operator in StackOperations
     private Stack<String> setStackOperations(String token) throws MyEcxeption {
         Stack<String> returnStack = new Stack<>();
         returnStack.clear();
@@ -42,8 +43,10 @@ class Calculator extends  CheckExpression{
             stackOperations.push(token);
             return  getReverse(returnStack);
         }
-
-        returnStack.push(token);
+        if (isNumber(token)) {
+            returnStack.push(token);
+        } else
+            throw new MyEcxeption("Entered incorrect character: " + token);
 
         return returnStack;
     }
@@ -66,17 +69,12 @@ class Calculator extends  CheckExpression{
         return  inputStack;
     }
 
-
-    private  void showErrorMessage(String character) {
-        System.out.println("incorrect character has been entered: " + character);
-    }
-
     // get result of calculation input expression
     public   double getResult(String inputEexpression) throws MyEcxeption {
         Stack<String> stackRPN;
 
         // make some preparations
-        inputEexpression = changeIncorrectSybols(inputEexpression);
+        inputEexpression = changeIncorrectSymbols(inputEexpression);
 
         if (inputEexpression.length() == 0)
             throw new MyEcxeption("the entered expression is empty");
@@ -121,12 +119,17 @@ class Calculator extends  CheckExpression{
         Stack<Double> stack = new Stack<>();
         stack.clear();
 
+        // read element from myStackRPN
+        // if it number then push it in stack
+        // if it operator then do operation between numbers in stack
         while (!myStackRPN.empty()) {
             String token = myStackRPN.pop();
             if (isNumber(token)) {
                 stack.push(Double.parseDouble(token));
             } else {
                 double right = stack.pop();
+                if (stack.empty())
+                    throw new  MyEcxeption("surplus operator: " + token);
                 stack.push(doOperation(stack.pop(), right, token));
             }
         }
