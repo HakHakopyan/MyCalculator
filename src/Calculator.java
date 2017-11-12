@@ -14,7 +14,8 @@ class Calculator {
     private final String[][] replaceSymbols  = {
             {" ",""},
             {"(-", "(0-"},
-            {",", "."}
+            {",", "."},
+            {"()", ""}
     };
 
     //
@@ -55,14 +56,14 @@ class Calculator {
     }
 
     // add to stack this.stackRPN contents of inputStack
-    private void setStackRPN(Stack<String> inputStack) {
+    private void setStackRPN(Stack<String> inputStack) throws MyEcxeption {
 
         while (!inputStack.empty()) {
             // if lastElement operator or number, then add it to stackRPN
             if (checkToken(inputStack.lastElement())) {
                 this.stackRPN.push(inputStack.pop());
             } else
-                showErrorMessage(inputStack.pop());
+                throw new MyEcxeption(inputStack.pop(), true);
         }
 
     }
@@ -78,8 +79,14 @@ class Calculator {
     }
 
     // get result of calculation input expression
-    public   double getResult(String inputEexpression) {
-        Stack<String> stackRPN = new Stack<>();
+    public   double getResult(String inputEexpression) throws MyEcxeption {
+        Stack<String> stackRPN;
+
+        // make some preparations
+        inputEexpression = takeOutLitter(inputEexpression);
+
+        if (inputEexpression.length() == 0)
+            throw new MyEcxeption("the entered expression is empty");
 
         try {
 
@@ -88,7 +95,7 @@ class Calculator {
             showStack("stack in reversed polish notation:", stackRPN);
         }
         catch (ParseException e){
-            System.out.println(e.getMessage());
+            throw new MyEcxeption(e.getMessage(), false);
         }
 
         return  calculate(stackRPN);
@@ -131,20 +138,20 @@ class Calculator {
     private String takeOutLitter(String inputExpression) {
         for (String[] rSymbols: replaceSymbols)
             inputExpression = inputExpression.replace(rSymbols[0], rSymbols[1]);
-        if (inputExpression.charAt(0) == '-') {
-            inputExpression = "0" + inputExpression;
+        if (!inputExpression.isEmpty()) {
+            if (inputExpression.charAt(0) == '-') {
+                inputExpression = "0" + inputExpression;
+            }
         }
         return inputExpression;
 
     }
     // Change input expression to Reverse Polish Notation
-    public Stack<String> parse(String expression) throws ParseException {
+    public Stack<String> parse(String expression) throws ParseException, MyEcxeption {
         // cleaning stacks
         stackOperations.clear();
         stackRPN.clear();
 
-        // make some preparations
-        expression = takeOutLitter(expression);
         // splitting input string into tokens
         StringTokenizer stringTokenizer = new StringTokenizer(expression,
                 OPERATORS + "()", true);
@@ -192,7 +199,7 @@ class Calculator {
                 left *= right;
                 break;
             case "/":
-                left /= right;
+                    left /= right;
                 break;
             case "^":
                 left = Math.pow(left, right);

@@ -20,6 +20,9 @@ public class MyCal {
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         }
+        catch (MyEcxeption myEx) {
+            System.out.println((myEx.getMyException()));
+        }
 
     }
 
