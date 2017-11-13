@@ -3,14 +3,19 @@ import java.util.Collections;
 import java.util.Stack;
 import java.util.StringTokenizer;
 
+
+// Implements the expression conversion to Reverse Polish Notation
+// using method parse, that is assisted methods setStackOperations and setStackRPN
+// And calculate expression in RPN using method calculate that is assisted method doOperation
+// when needed to calculate expression apply to the method getResult
 class Calculator extends  CheckExpression{
     // temporary stack that holds operators and brackets
     private Stack<String> stackOperations = new Stack<String>();
     // stack for holding expression converted to reversed polish notation
     private Stack<String> stackRPN = new Stack<String>();
 
-    // if close bracket then put all operators before first open bracket in return stack
-    // if operator then check precedence operators in token and last operator in StackOperations
+    // if close bracket then put all operators before first open bracket from this.stackOperations to return stack
+    // if operator then check precedence operators in token and last operator in this.StackOperations
     private Stack<String> setStackOperations(String token) throws MyEcxeption {
         Stack<String> returnStack = new Stack<>();
         returnStack.clear();

@@ -1,3 +1,4 @@
+// Our class exception, which our methods throw when find error in expression
 public class MyEcxeption extends Exception implements  ExpressionComponents{
     private  String myException;
 
