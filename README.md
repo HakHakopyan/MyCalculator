@@ -11,17 +11,32 @@ the program displays the result of the calculation expression, entered as a stri
 
   Суть метода сосоит в представлении вычисляемого выражения в форме поезда, где каждый элемент выражения (символ) выступает в виде вагона поезда. Ветка по которой движется поезд имеет перекресток ведущий на две станции. Все цифры сразу движутс на конечную станцию, а остальные элементы едут на промежуточный или сравниваются на перекрестке с элементами которые уже есть на промежуточном. Так если это закрывающаяся скобка, то она выталкивает из промежуточной станции все элементы до первой открывающейся скобки. Если это оператор, то сравнивается его приоритет с приоритетом последнего отправившегося на промежуточную станцию, если приоритет меньше иили равен то он выталкивает опертор из промежуточной станции и сам встает на промежуточную станцию и т.д.
   
+  Для реализации данного метода а так же для подсчета выражения в обртаной польской нотации воспользуемся элементом коллеции, классом Stack. Stack является подклассом класса Vector, который реализует простой механизм типа "последний вошёл - первый вышел" (LIFO), этот механизм нам идельно подходит.
+  
+  Для обработки ошибок в входном выражении воспользуеся Ecxeption. А именно создадим свой собственный класс MyException наследующегося от Exception и будем выбрасывать его экземпляры во время нахождения некорректного символа, лишнего опреатора, лишней скобки, илишних операторво или деления на 0.
+  
   Побробное описание алгоритма можно посмотреть здесь https://ru.wikipedia.org/wiki/Обратная_польская_запись
   
 Опсание программы:
 
-  Программа делится на два класса:
+  Программа состоит из четырех классов и одного интерфейса:
   
+    // Contains all Operators and other components of the expression and characters that need replacing
+    public interface ExpressionComponents { }
+    
+    // Contains method main
     Public MyCal {
       public static void main(String[] arg)
     }
     
-    И класс, реализующий наш алгоритм:
+    // Our class exception, which our methods throw when find error in expression
+    public class MyEcxeption extends Exception implements  ExpressionComponents{
+    
+    Класс, реализующий алгоритм перевода в обратную польскую записиь и последующего вычисления:
+    // Implements the expression conversion to Reverse Polish Notation
+    // using method parse, that is assisted methods setStackOperations and setStackRPN
+    // And calculate expression in RPN using method calculate that is assisted method doOperation
+    // when needed to calculate expression apply to the method getResult
     class Calculator {...}
     
     Основными методами которого являются:
