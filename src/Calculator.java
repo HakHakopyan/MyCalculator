@@ -1,22 +1,31 @@
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.Collections;
 import java.util.Stack;
 import java.util.StringTokenizer;
 
-
-// Implements the expression conversion to Reverse Polish Notation
-// using method parse, that is assisted methods setStackOperations and setStackRPN
-// And calculate expression in RPN using method calculate that is assisted method doOperation
-// when needed to calculate expression apply to the method getResult
-class Calculator extends  CheckExpression{
-    // temporary stack that holds operators and brackets
+/**
+ * Implements the expression conversion to Reverse Polish Notation
+ * using method parse, that is assisted methods setStackOperations and setStackRPN
+ * And calculate expression in RPN using method calculate that is assisted method doOperation
+ * when needed to calculate expression apply to the method getResult
+ * @version  2.0
+ * @author  Hakop Hakopyan
+ */
+public class Calculator extends  CheckExpression{
+    /** temporary stack that holds operators and brackets */
     private Stack<String> stackOperations = new Stack<String>();
-    // stack for holding expression converted to reversed polish notation
+    /** stack for holding expression converted to reversed polish notation */
     private Stack<String> stackRPN = new Stack<String>();
 
-    // if close bracket then put all operators before first open bracket from this.stackOperations to return stack
-    // if operator then check precedence operators in token and last operator in this.StackOperations
-    private Stack<String> setStackOperations(String token) throws MyEcxeption {
+    /**
+     * if close bracket then put all operators before first open bracket from this.stackOperations to return stack
+     * if operator then check precedence operators in token and last operator in this.StackOperations
+     * @param token contain character
+     * @return numbers and operators
+     * @throws MyEcxeption when expression contains extra or wrong characters
+     */
+    protected Stack<String> setStackOperations(String token) throws MyEcxeption {
         Stack<String> returnStack = new Stack<>();
         returnStack.clear();
 
@@ -35,7 +44,7 @@ class Calculator extends  CheckExpression{
             if (stackOperations.empty())
                 throw new MyEcxeption(OPEN_BRACKET, true);
             stackOperations.pop();
-            return getReverse(returnStack);
+            return getInverted(returnStack);
         }
 
         // if precedence operator in token variable less then last operator in stackOperations, then
@@ -46,7 +55,7 @@ class Calculator extends  CheckExpression{
                 returnStack.push(stackOperations.pop());
             }
             stackOperations.push(token);
-            return  getReverse(returnStack);
+            return  getInverted(returnStack);
         }
         if (isNumber(token)) {
             returnStack.push(token);
@@ -56,8 +65,12 @@ class Calculator extends  CheckExpression{
         return returnStack;
     }
 
-    // add to stack this.stackRPN contents of inputStack
-    private void setStackRPN(Stack<String> inputStack) throws MyEcxeption {
+    /**
+     * add to stack this.stackRPN contents of inputStack
+     * @param inputStack contains numbers and operators
+     * @throws MyEcxeption when inputStack contain bracket
+     */
+    protected void setStackRPN(Stack<String> inputStack) throws MyEcxeption {
 
         while (!inputStack.empty()) {
             // if lastElement operator or number, then add it to stackRPN
@@ -69,19 +82,29 @@ class Calculator extends  CheckExpression{
 
     }
 
-    private  Stack<String> getReverse(Stack<String> inputStack) {
+    /**
+     * gets the stack and returns it inverted
+     * @param inputStack contains Stack
+     * @return inverted Stack
+     */
+    protected   Stack<String> getInverted(Stack<String> inputStack) {
         Collections.reverse(inputStack);
         return  inputStack;
     }
 
-    // get result of calculation input expression
-    public   double getResult(String inputEexpression) throws MyEcxeption {
+    /**
+     * get result of calculation input expression
+     * @param inputEexpression contain expression, which need to calculate
+     * @return result of calculation
+     * @throws MyEcxeption when inputExpression is empty or generate ParseException
+     */
+    public BigDecimal getResult(String inputEexpression) throws MyEcxeption {
         Stack<String> stackRPN;
 
         // make some preparations
         inputEexpression = changeIncorrectSymbols(inputEexpression);
 
-        if (inputEexpression.length() == 0)
+        if (inputEexpression == null || inputEexpression.length() == 0 )
             throw new MyEcxeption("the entered expression is empty");
 
         try {
@@ -97,7 +120,13 @@ class Calculator extends  CheckExpression{
         return  calculate(stackRPN);
     }
 
-    // Change input expression to Reverse Polish Notation
+    /**
+     * Change input expression in infix notation to Reverse Polish Notation
+     * @param expression in the infix notation
+     * @return expression in the Reverse Polish Notation
+     * @throws ParseException when generate ParseException
+     * @throws MyEcxeption when exception generate {@link Calculator#setStackOperations(String)} or {@link Calculator#setStackOperations(String)}
+     */
     public Stack<String> parse(String expression) throws ParseException, MyEcxeption {
         // cleaning stacks
         stackOperations.clear();
@@ -115,13 +144,19 @@ class Calculator extends  CheckExpression{
 
         setStackRPN(stackOperations);
 
-        return getReverse(stackRPN);
+        return getInverted(stackRPN);
     }
 
-    // calculate the result of the expression in the reverse Polish notation
-    public double calculate(Stack<String> myStackRPN) throws  MyEcxeption {
+    /**
+     * calculate the result of the expression in the reverse Polish notation
+     * @param myStackRPN expression in the Reverse Polish Notation
+     * @return result of calculation
+     * @throws MyEcxeption when exception generate {@link Calculator#doOperation(double, double, String)}
+     */
+    //
+    public BigDecimal calculate(Stack<String> myStackRPN) throws  MyEcxeption {
 
-        Stack<Double> stack = new Stack<>();
+        Stack<BigDecimal> stack = new Stack<>();
         stack.clear();
 
         // read element from myStackRPN
@@ -130,9 +165,9 @@ class Calculator extends  CheckExpression{
         while (!myStackRPN.empty()) {
             String token = myStackRPN.pop();
             if (isNumber(token)) {
-                stack.push(Double.parseDouble(token));
+                stack.push(new BigDecimal(token));
             } else {
-                double right = stack.pop();
+                BigDecimal right = stack.pop();
                 if (stack.empty())
                     throw new  MyEcxeption("surplus operator: " + token);
                 stack.push(doOperation(stack.pop(), right, token));
@@ -141,26 +176,32 @@ class Calculator extends  CheckExpression{
         return  stack.pop();
     }
 
-    // Get the result of the operation between the left and right numbers
-    private  double doOperation(double left, double right, String operator) throws  MyEcxeption {
+    /**
+     * Get the result of the operation between the left and right numbers
+     * @param left the number from the left of the operator
+     * @param right the number from the right of the operator
+     * @param operator contains operator
+     * @return result of operation
+     * @throws MyEcxeption when an arithmetic error occurred
+     */
+    //
+    private  BigDecimal doOperation(BigDecimal left, BigDecimal right, String operator) throws  MyEcxeption {
         try {
             switch (operator) {
                 case "-":
-                    left -= right;
+                    left = left.subtract(right);
                     break;
                 case "+":
-                    left += right;
+                    left = left.add(right);
                     break;
                 case "*":
-                    left *= right;
+                    left = left.multiply(right);
                     break;
                 case "/":
-                        if (right == 0)
-                            throw new MyEcxeption(left, right, operator);
-                        left /= right;
+                    left = left.divide(right);
                     break;
                 case "^":
-                    left = Math.pow(left, right);
+                    left = left.pow(right.intValue());
             }
         } catch (ArithmeticException ex) {
             throw new MyEcxeption(left, right, operator);
@@ -168,7 +209,11 @@ class Calculator extends  CheckExpression{
         return  left;
     }
 
-    // Write in console input stack contents
+    /**
+     * Write in console input stack contents
+     * @param prefix contain declaration
+     * @param stackRPN contain Stack
+     */
     public void showStack(String prefix, Stack<String> stackRPN){
         Stack<String> stack = new Stack<>();
         stack.addAll(stackRPN);
