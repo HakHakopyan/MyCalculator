@@ -14,9 +14,9 @@ import java.util.StringTokenizer;
  */
 public class Calculator extends  CheckExpression{
     /** temporary stack that holds operators and brackets */
-    private Stack<String> stackOperations = new Stack<String>();
+    protected Stack<String> stackOperations = new Stack<String>();
     /** stack for holding expression converted to reversed polish notation */
-    private Stack<String> stackRPN = new Stack<String>();
+    protected Stack<String> stackRPN = new Stack<String>();
 
     /**
      * if close bracket then put all operators before first open bracket from this.stackOperations to return stack
@@ -127,7 +127,7 @@ public class Calculator extends  CheckExpression{
      * @throws ParseException when generate ParseException
      * @throws MyEcxeption when exception generate {@link Calculator#setStackOperations(String)} or {@link Calculator#setStackOperations(String)}
      */
-    public Stack<String> parse(String expression) throws ParseException, MyEcxeption {
+    protected Stack<String> parse(String expression) throws ParseException, MyEcxeption {
         // cleaning stacks
         stackOperations.clear();
         stackRPN.clear();
@@ -154,7 +154,7 @@ public class Calculator extends  CheckExpression{
      * @throws MyEcxeption when exception generate {@link Calculator#doOperation(double, double, String)}
      */
     //
-    public BigDecimal calculate(Stack<String> myStackRPN) throws  MyEcxeption {
+    protected BigDecimal calculate(Stack<String> myStackRPN) throws  MyEcxeption {
 
         Stack<BigDecimal> stack = new Stack<>();
         stack.clear();
@@ -185,7 +185,7 @@ public class Calculator extends  CheckExpression{
      * @throws MyEcxeption when an arithmetic error occurred
      */
     //
-    private  BigDecimal doOperation(BigDecimal left, BigDecimal right, String operator) throws  MyEcxeption {
+    protected  BigDecimal doOperation(BigDecimal left, BigDecimal right, String operator) throws  MyEcxeption {
         try {
             switch (operator) {
                 case "-":
@@ -214,7 +214,7 @@ public class Calculator extends  CheckExpression{
      * @param prefix contain declaration
      * @param stackRPN contain Stack
      */
-    public void showStack(String prefix, Stack<String> stackRPN){
+    protected void showStack(String prefix, Stack<String> stackRPN){
         Stack<String> stack = new Stack<>();
         stack.addAll(stackRPN);
         System.out.println(prefix);
