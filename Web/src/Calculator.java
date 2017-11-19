@@ -1,3 +1,4 @@
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.Collections;
@@ -12,7 +13,7 @@ import java.util.StringTokenizer;
  * @version  2.0
  * @author  Hakop Hakopyan
  */
-public class Calculator extends  CheckExpression{
+public class Calculator extends  CheckExpression implements Serializable{
     /** temporary stack that holds operators and brackets */
     protected Stack<String> stackOperations = new Stack<String>();
     /** stack for holding expression converted to reversed polish notation */
@@ -98,26 +99,27 @@ public class Calculator extends  CheckExpression{
      * @return result of calculation
      * @throws MyException when inputExpression is empty or generate ParseException
      */
-    public BigDecimal getResult(String inputEexpression) throws MyException {
+    public Result getResult(String inputEexpression) throws MyException {
         Stack<String> stackRPN;
 
         // make some preparations
-        inputEexpression = changeIncorrectSymbols(inputEexpression);
+        Result result = new Result();
+        result.setExpressionInput(changeIncorrectSymbols(inputEexpression));
 
-        if (inputEexpression == null || inputEexpression.length() == 0 )
+        if (result.getExpressionInput() == null || result.getExpressionInput().length() == 0 )
             throw new MyException("the entered expression is empty");
 
         try {
 
-            stackRPN = parse(inputEexpression);
-
-            showStack("stack in reversed polish notation:", stackRPN);
+            stackRPN = parse(result.getExpressionInput());
         }
         catch (ParseException e){
             throw new MyException(e.getMessage(), false);
         }
+        result.setExpressionRPN(stackToString(stackRPN));
+        result.setResult(calculate(stackRPN));
 
-        return  calculate(stackRPN);
+        return  result;
     }
 
     /**
@@ -151,7 +153,7 @@ public class Calculator extends  CheckExpression{
      * calculate the result of the expression in the reverse Polish notation
      * @param myStackRPN expression in the Reverse Polish Notation
      * @return result of calculation
-     * @throws MyException when exception generate {@link Calculator#doOperation(double, double, String)}
+     * @throws MyException when exception generate {@link Calculator#doOperation(BigDecimal, BigDecimal, String)}
      */
     //
     protected BigDecimal calculate(Stack<String> myStackRPN) throws MyException {
@@ -215,16 +217,18 @@ public class Calculator extends  CheckExpression{
 
     /**
      * Write in console input stack contents
-     * @param prefix contain declaration
      * @param stackRPN contain Stack
+     * @return Stack representation as a string
      */
-    protected void showStack(String prefix, Stack<String> stackRPN){
+    protected String stackToString(Stack<String> stackRPN){
         Stack<String> stack = new Stack<>();
         stack.addAll(stackRPN);
-        System.out.println(prefix);
+        String out = "";
+
         while (!stack.empty()) {
-            System.out.print(stack.pop() + " ");
+            out += stack.pop() + " ";
         }
-        System.out.println();
+
+        return out;
     }
 }

@@ -1,6 +1,7 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.math.BigDecimal;
 
 /**
@@ -24,16 +25,11 @@ public class MyCalculator {
 
             String expression = readExpressionFromConsole();
 
-            BigDecimal result = calculator.getResult(expression);
-            //result = result.stripTrailingZeros(); if 10 then result=1E+1 - problems))
+            Result result = calculator.getResult(expression);
+            try (PrintWriter pw = new PrintWriter(System.out)) {
+                result.print(pw);
+            }
 
-            System.out.print("Результат подсчета выражения: ");
-            //System.out.println(result);
-
-            if (result.remainder(BigDecimal.ONE).movePointRight(result.scale()).abs().intValue() == 0) {
-                System.out.println(result.toBigInteger());
-            } else
-                System.out.println(result);
 
         } catch(IOException ex) {
             System.out.println(ex.getMessage());
