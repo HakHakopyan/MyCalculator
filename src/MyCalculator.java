@@ -28,7 +28,7 @@ public class MyCalculator {
             //result = result.stripTrailingZeros(); if 10 then result=1E+1 - problems))
 
             System.out.print("Результат подсчета выражения: ");
-            System.out.println(result);
+            //System.out.println(result);
 
             if (result.remainder(BigDecimal.ONE).movePointRight(result.scale()).abs().intValue() == 0) {
                 System.out.println(result.toBigInteger());

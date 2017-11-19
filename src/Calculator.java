@@ -198,7 +198,11 @@ public class Calculator extends  CheckExpression{
                     left = left.multiply(right);
                     break;
                 case "/":
-                    left = left.divide(right);
+                    left = left.divide(right, SCALE, BigDecimal.ROUND_HALF_UP);
+                    if (left.remainder(BigDecimal.ONE).movePointRight(left.scale()).abs().intValue() == 0) {
+                        left = new BigDecimal(left.toBigInteger());
+                    } else
+                        left = left.stripTrailingZeros();
                     break;
                 case "^":
                     left = left.pow(right.intValue());

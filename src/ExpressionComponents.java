@@ -18,6 +18,8 @@ public interface ExpressionComponents {
     char SUBTRACTION = '-';
     /** Contain addition operator + */
     char ADDITION = '+';
+    /** Contain scale for division operation + */
+    byte SCALE = 25;
 
     /** expression elements that need to be replaced for correct work with expression */
     String[][] REPLACE_SYMBOLS = {
