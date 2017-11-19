@@ -30,7 +30,7 @@ the program displays the result of the calculation expression, entered as a stri
     }
     
     // Our class exception, which our methods throw when find error in expression
-    public class MyEcxeption extends Exception implements  ExpressionComponents{
+    public class MyException extends Exception implements  ExpressionComponents{
     
     Класс, реализующий алгоритм перевода в обратную польскую записиь и последующего вычисления:
     // Implements the expression conversion to Reverse Polish Notation

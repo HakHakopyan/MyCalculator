@@ -6,11 +6,11 @@ import java.math.BigDecimal;
  * @version  1.0
  * @author  Hakop Hakopyan
  */
-public class MyEcxeption extends Exception implements  ExpressionComponents{
+public class MyException extends Exception implements  ExpressionComponents{
     private  String myException;
 
     /**
-     * @return type String, return value {@link MyEcxeption#myException}
+     * @return type String, return value {@link MyException#myException}
      */
     public String getMyException() {
         return myException;
@@ -49,7 +49,7 @@ public class MyEcxeption extends Exception implements  ExpressionComponents{
      * @param exception contains character or error description
      * @param check determines search for character the appropriate error or not
      */
-    MyEcxeption(String exception, boolean check) {
+    MyException(String exception, boolean check) {
         if (check)
             setMyExceptionWithCheck(exception);
         else
@@ -60,7 +60,7 @@ public class MyEcxeption extends Exception implements  ExpressionComponents{
      * Use when there is a ready error message
      * @param exception contains description of the error
      */
-    MyEcxeption(String exception) {
+    MyException(String exception) {
         setMyException(exception);
     }
 
@@ -70,7 +70,7 @@ public class MyEcxeption extends Exception implements  ExpressionComponents{
      * @param rightArg the number from the right of the operator
      * @param operator contains operator
      */
-    MyEcxeption(BigDecimal leftArg, BigDecimal rightArg, String operator) {
+    MyException(BigDecimal leftArg, BigDecimal rightArg, String operator) {
         String finalException = "";
         if (operator == DIVISION) {
             finalException += "Division by zero: ";

@@ -37,7 +37,7 @@ public class MyCalculator {
 
         } catch(IOException ex) {
             System.out.println(ex.getMessage());
-        } catch (MyEcxeption ex) {
+        } catch (MyException ex) {
             System.out.println(ex.getMyException());
         }
     }
