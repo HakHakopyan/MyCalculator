@@ -19,7 +19,7 @@ public interface ExpressionComponents {
     /** Contain addition operator + */
     char ADDITION = '+';
     /** Contain scale for division operation + */
-    byte SCALE = 25;
+    byte SCALE = 5;
 
     /** expression elements that need to be replaced for correct work with expression */
     String[][] REPLACE_SYMBOLS = {
